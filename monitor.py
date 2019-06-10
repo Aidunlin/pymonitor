@@ -8,7 +8,9 @@ import time
 
 # Initialize PiCamera, set up Google Auth creds
 choice = ""
+threshold = 0.1
 camera = picamera.PiCamera()
+folder_id = "19jsoGFGGH14H0rc-jvxhGl5lrInUKEQe"
 gauth = GoogleAuth()
 auth = ["https://www.googleapis.com/auth/drive"]
 gauth.credentials = Creds.from_json_keyfile_name("creds.json", auth)
@@ -18,7 +20,6 @@ drive = GoogleDrive(gauth)
 def upload(file):
     try:
         print("Uploading", file)
-        folder_id = "19jsoGFGGH14H0rc-jvxhGl5lrInUKEQe"
         location = [{"kind": "drive#fileLink", "id": folder_id}]
         drive_file = drive.CreateFile({"parents": location})
         drive_file.SetContentFile(file)
@@ -68,7 +69,7 @@ while choice != "3":
                 print(diff)
 
                 # If difference value crosses certain threshold, record video
-                if diff > 0.1:
+                if diff > threshold:
                     print("MOTION DETECTED!")
                     print("Recording video")
                     rec_time = time.strftime("%m-%d-%Y-%H-%M-%S")
@@ -83,7 +84,7 @@ while choice != "3":
                 camera.stop_preview()
                 upload("f" + cap_time + ".jpg")
                 upload("s" + cap_time + ".jpg")
-                if diff <= 0.1:
+                if diff <= threshold:
                     time.sleep(5)
 
         # Go back to main program loop when interrupted
@@ -97,7 +98,7 @@ while choice != "3":
             # List all files in Google Drive directory
             drive_file_list = drive.ListFile().GetList()
             for file in drive_file_list:
-                if file["id"] != "19jsoGFGGH14H0rc-jvxhGl5lrInUKEQe":
+                if file["id"] != folder_id:
                     print(file["title"], file["id"])
 
             print("This will delete the files listed above")
@@ -107,7 +108,7 @@ while choice != "3":
             if clear_choice == "y":
                 # Delete all files in GDrive directory
                 for file in drive_file_list:
-                    if file["id"] != "19jsoGFGGH14H0rc-jvxhGl5lrInUKEQe":
+                    if file["id"] != folder_id:
                         print("Deleting " + file["title"])
                         file.Delete()
                 print("Complete")
