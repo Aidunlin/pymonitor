@@ -10,7 +10,7 @@ import time
 choice = ""
 threshold = 0.1
 camera = picamera.PiCamera()
-folder_id = "19jsoGFGGH14H0rc-jvxhGl5lrInUKEQe"
+folder_id = "DRIVE_FOLDER_ID_TO_UPLOAD_FILES"
 gauth = GoogleAuth()
 auth = ["https://www.googleapis.com/auth/drive"]
 gauth.credentials = Creds.from_json_keyfile_name("creds.json", auth)
